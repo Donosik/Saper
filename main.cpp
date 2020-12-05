@@ -13,6 +13,6 @@ int main(int argc, char *argv[])
 
     Board board;
     board=RandomBoard(args.x,args.y,args.numberOfBombs);
-    ShowBoard(board);
+    MainGame(board);
     return 0;
 }

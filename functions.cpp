@@ -13,7 +13,7 @@ void Arguments(int argc, char *argv[], Args &args, bool &error)
         error = true;
         return;
     }
-    for (int i = 1; i < argc; i+=2)
+    for (int i = 1; i < argc; i += 2)
     {
         if ((std::string) argv[i] == "-x")
         {
@@ -89,27 +89,94 @@ Board RandomBoard(int x, int y, int numberOfBombs)
         int randomY = Random(0, y - 1);
         board.board[randomX][randomY].bomb = true;
     }
+    CountAllBombs(board);
     return board;
+}
+
+void CountAllBombs(Board &board)
+{
+    for (int i = 0; i < board.board.size(); i++)
+    {
+        for (int j = 0; j < board.board[i].size(); j++)
+        {
+            if (!board.board[i][j].bomb)
+            {
+                board.board[i][j].count = CountBombs(board, i, j);
+            }
+        }
+    }
+}
+
+int CountBombs(Board &board, int x, int y)
+{
+    int counter = 0;
+    for (int i = x - 1; i <= x + 1; i++)
+    {
+        for (int j = y - 1; j <= y + 1; j++)
+        {
+            if (i < 0 || i >= board.x || j < 0 || j >= board.y)
+            {
+                continue;
+            }
+            if (board.board[i][j].bomb)
+            {
+                counter++;
+            }
+        }
+    }
+    return counter;
 }
 
 void ShowBoard(Board board)
 {
-    for(int i=0;i<board.board.size();i++)
+    for (int i = 0; i < board.board.size(); i++)
     {
-        for(int j=0;j<board.board[i].size();j++)
+        for (int j = 0; j < board.board[i].size(); j++)
         {
             //TODO: Prawidłowe wyświetlanie planszy
-            if (board.board[i][j].bomb)
+            if (board.board[i][j].open)
             {
-                std::cout<<"B ";
+                if (board.board[i][j].bomb)
+                {
+                    std::cout << "B ";
+                }
+                else if (board.board[i][j].count)
+                {
+                    std::cout << board.board[i][j].count << " ";
+                }
+                else
+                {
+                    std::cout << "0 ";
+                }
             }
             else
             {
                 std::cout<<"X ";
             }
         }
-        std::cout<<std::endl;
+        std::cout << std::endl;
     }
+}
+
+void MainGame(Board &board)
+{
+    int x,y;
+    do
+    {
+        system("cls");
+        std::cout<<"Nowe!"<<std::endl;
+        ShowBoard(board);
+        std::cout<<"Podaj x, gdzie chcesz kliknac:";
+        std::cin>>x;
+        std::cout<<"Podaj y, gdzie chcesz kliknac: ";
+        std::cin>>y;
+        board.board[x-1][y-1].open= true;
+    }while (!board.board[x-1][y-1].bomb);
+}
+
+void SaveToFile(std::string name,std::string fileName)
+{
+    //TODO: zapisywanie do pliku
 }
 
 int Random(int min, int max)
