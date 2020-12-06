@@ -24,7 +24,7 @@ void Arguments(int argc, char *argv[], Args &args, bool &error)
                 error = true;
                 return;
             }
-            args.x = x;
+            args.y = x;
         }
         else if ((std::string) argv[i] == "-y")
         {
@@ -35,7 +35,7 @@ void Arguments(int argc, char *argv[], Args &args, bool &error)
                 error = true;
                 return;
             }
-            args.y = y;
+            args.x = y;
         }
         else if ((std::string) argv[i] == "-m")
         {

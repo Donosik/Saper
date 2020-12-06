@@ -16,7 +16,6 @@ int main(int argc, char *argv[])
     /// Plansza
     Board board;
     board=RandomBoard(args.x,args.y,args.numberOfBombs);
-
     MainGame(board);
 
     SaveToFile(args.playerName,args.dataFile,board,error);

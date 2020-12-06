@@ -17,8 +17,8 @@
 void Arguments(int argc, char *argv[], Args &args, bool &error);
 
 /// Funkcja losująca zawartość planszy w oparciu o rozmiar i ilość min
-/// @param x Parametr wysokości planszy
-/// @param y Parametr szerokości planszy
+/// @param x Parametr szerokości planszy
+/// @param y Parametr wysokości planszy
 /// @param numberOfBombs Ilość bomb, które mają być rozmieszczone na planszy
 /// @return Zmienna typu Board zwraca całą planszę
 Board RandomBoard(int x,int y,int numberOfBombs);
