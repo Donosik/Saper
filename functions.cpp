@@ -127,13 +127,12 @@ int CountBombs(Board &board, int x, int y)
     return counter;
 }
 
-void ShowBoard(Board board)
+void ShowBoard(Board &board)
 {
     for (int i = 0; i < board.board.size(); i++)
     {
         for (int j = 0; j < board.board[i].size(); j++)
         {
-            //TODO: Prawidłowe wyświetlanie planszy
             if (board.board[i][j].open)
             {
                 if (board.board[i][j].bomb)
@@ -151,7 +150,7 @@ void ShowBoard(Board board)
             }
             else
             {
-                std::cout<<"X ";
+                std::cout << "X ";
             }
         }
         std::cout << std::endl;
@@ -160,23 +159,89 @@ void ShowBoard(Board board)
 
 void MainGame(Board &board)
 {
-    int x,y;
+    int x, y;
     do
     {
         system("cls");
-        std::cout<<"Nowe!"<<std::endl;
+        std::cout << "Nowe!" << std::endl;
         ShowBoard(board);
-        std::cout<<"Podaj x, gdzie chcesz kliknac:";
-        std::cin>>x;
-        std::cout<<"Podaj y, gdzie chcesz kliknac: ";
-        std::cin>>y;
-        board.board[x-1][y-1].open= true;
-    }while (!board.board[x-1][y-1].bomb);
+        std::cout << "Podaj x, gdzie chcesz kliknac:";
+        std::cin >> x;
+        std::cout << "Podaj y, gdzie chcesz kliknac: ";
+        std::cin >> y;
+        board.board[x - 1][y - 1].open = true;
+    } while (!board.board[x - 1][y - 1].bomb);
 }
 
-void SaveToFile(std::string name,std::string fileName)
+void SaveToFile(std::string name, std::string fileName, Board &board, bool &error)
 {
     //TODO: zapisywanie do pliku
+    std::ifstream fileToOpen(fileName);
+    if (!fileToOpen.is_open())
+    {
+        std::cout << "1Proba otworzenia pliku do zapisu sie nie powiodla" << std::endl;
+        error = true;
+        return;
+    }
+    std::vector<std::pair<std::string, float>> players = std::vector<std::pair<std::string, float>>();
+    std::string line;
+    bool isAdded = false;
+    while (std::getline(fileToOpen, line))
+    {
+        std::stringstream str(line);
+        std::string playerName;
+        float highScore;
+        str >> playerName >> highScore;
+        if (name == playerName)
+        {
+            isAdded = true;
+            float opened = 0;
+            for (auto &x:board.board)
+            {
+                for (auto &y:x)
+                {
+                    if (y.open)
+                        opened++;
+                }
+            }
+            float boardSize = (float) board.y * (float) board.x;
+            if (highScore < (opened / boardSize))
+            {
+                highScore = opened / boardSize;
+            }
+        }
+        players.push_back(std::make_pair(playerName, highScore));
+    }
+    if (!isAdded)
+    {
+        float opened = 0;
+        for (auto &x:board.board)
+        {
+            for (auto &y:x)
+            {
+                if (y.open)
+                    opened++;
+            }
+        }
+        float boardSize = (float) board.y * (float) board.x;
+        players.push_back(std::make_pair(name, opened / boardSize));
+    }
+    fileToOpen.close();
+
+    std::ofstream fileToSave(fileName);
+    if (!fileToSave.is_open())
+    {
+        std::cout << "2Proba otworzenia pliku do zapisu sie nie powiodla" << std::endl;
+        error = true;
+        return;
+    }
+
+    for (int i = 0; i < players.size(); i++)
+    {
+        fileToSave << players[i].first << " " << players[i].second << std::endl;
+    }
+    fileToSave.close();
+
 }
 
 int Random(int min, int max)
